@@ -13,11 +13,8 @@ def appendUserEvent(userEventsBatch):
     userEvent.timestamp = 1000L;
     userEvent.uuid = str(uuid.uuid4())
     userEvent.apikey = 'key'
-    userEvent.userId = 123
-    userEvent.eventType = 'artist_search'
-
-    # enum
-    userEvent.networkStatus = ue.BBMUserEvent.ONLINE
+    userEvent.eventName = 'artist_search'
+    userEvent.eventType = 'ap.user'
 
     # context
     # contains standardized (optional keys) and list of arbitrary key/values
@@ -40,7 +37,8 @@ def appendUserEvent(userEventsBatch):
 
     eventData = userEvent.eventData
 
-    eventData.stationIdent = 'a123'
+    eventData.userId = '1234'
+    eventData.stationId = 'a123'
     eventData.trackId = '4321'
 
     arbitraryData1 = eventData.otherEventData.add()
