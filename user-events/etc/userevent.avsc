@@ -3,7 +3,7 @@
  "name": "Event",
  "fields": [
      {"name": "timestamp", "type": "int"},
-     {"name": "uuid", "type": "int"},
+     {"name": "uuid", "type": "string"},
      {"name": "apikey", "type": ["string", "null"]},
      {"name": "eventName", "type": "string"},
      {"name": "eventType", "type": "string"},
