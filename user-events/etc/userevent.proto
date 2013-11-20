@@ -14,15 +14,15 @@ message BBMUserEvent {
 	}
 
 	message EventData {
-		optional string userId = 1;
-		optional string deviceId = 2;
-		optional string trackId = 3;
-		optional string trackVersionId = 4;
-		optional string albumId = 5;
-		optional string artistId = 6;
-		optional string playlistId = 7;
-		optional string stationId = 8;
-		optional string stationCookie = 9;
+		repeated string userId = 1;
+		repeated string deviceId = 2;
+		repeated string trackId = 3;
+		repeated string trackVersionId = 4;
+		repeated string albumId = 5;
+		repeated string artistId = 6;
+		repeated string playlistId = 7;
+		repeated string stationId = 8;
+		repeated string stationCookie = 9;
 		repeated KeyValue otherEventData = 10;
 	}
 
