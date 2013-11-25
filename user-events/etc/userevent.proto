@@ -17,6 +17,8 @@ message BBMUserEvent {
 
         required string initiator = 10;
 
+	required string sessionId = 11;
+
         message KeyValue {
                 required string key = 1;
                 required string value = 2;
@@ -34,9 +36,9 @@ message BBMUserEvent {
                 repeated KeyValue otherEventData = 9;
         }
 
-        required EventData eventData = 11;
+        required EventData eventData = 12;
 
-        required int32 version = 12;
+        required int32 version = 13;
 }
 
 message BBMUserEventBatch {

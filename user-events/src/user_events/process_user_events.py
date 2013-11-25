@@ -22,6 +22,8 @@ def appendUserEvent(userEventsBatch):
 
     userEvent.initiator = 'userClient'
 
+    userEvent.sessionId = 'ASESSIONID'
+
     # event data
 
     eventData = userEvent.eventData
