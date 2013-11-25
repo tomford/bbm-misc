@@ -10,36 +10,24 @@ def appendUserEvent(userEventsBatch):
 
     # main keys
 
-    userEvent.timestamp = 1000L;
+    userEvent.timestamp = 1000L
     userEvent.uuid = str(uuid.uuid4())
-    userEvent.apikey = 'key'
-    userEvent.eventName = 'artist_search'
-    userEvent.eventType = 'ap.user'
+    userEvent.platform = 'key'
+    userEvent.userId = 12345
+    userEvent.page = 'home'
+    userEvent.section = 'nowPlaying'
+    userEvent.component = 'stationInfo'
+    userEvent.element = 'favouriteStationButton'
+    userEvent.action = 'click'
 
-    # context
-    # contains standardized (optional keys) and list of arbitrary key/values
-
-    context = userEvent.context
-
-    context.containerName = 'now_playing'
-    context.trackIdPlaying = 12345
-    # a lot of optional fields omitted
-
-    arbitraryContext1 = context.otherContext.add()
-    arbitraryContext1.key = 'panel_number'
-    arbitraryContext1.value = '6'
-
-    arbitraryContext2 = context.otherContext.add()
-    arbitraryContext2.key = 'veil_lifted'
-    arbitraryContext2.value = 'true'
+    userEvent.initiator = 'userClient'
 
     # event data
 
     eventData = userEvent.eventData
 
-    eventData.userId = '1234'
-    eventData.stationId = 'a123'
-    eventData.trackId = '4321'
+    eventData.stationId.append('a123')
+    eventData.trackId.append(4321)
 
     arbitraryData1 = eventData.otherEventData.add()
     arbitraryData1.key = 'search_phrase'
@@ -48,6 +36,8 @@ def appendUserEvent(userEventsBatch):
     arbitraryData1 = eventData.otherEventData.add()
     arbitraryData1.key = 'search_results'
     arbitraryData1.value = '0'
+
+    userEvent.version = 1
 
     if not userEvent.IsInitialized():
         print "Error in event initialization"

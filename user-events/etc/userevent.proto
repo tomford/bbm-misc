@@ -1,42 +1,42 @@
+
 package bbm;
 
 message BBMUserEvent {
 
-	required int64 timestamp = 1;
-	required string uuid = 2;
-	optional string apikey = 3;
-	required string eventName = 4;
-	required string eventType = 5;
+        required int64 timestamp = 1;
+        required string uuid = 2;
+        required string platform = 3;
 
-	message KeyValue {
-		required string key = 1;
-		required string value = 2;
-	}
+        required int32 userId = 4;
 
-	message EventData {
-		repeated string userId = 1;
-		repeated string deviceId = 2;
-		repeated string trackId = 3;
-		repeated string trackVersionId = 4;
-		repeated string albumId = 5;
-		repeated string artistId = 6;
-		repeated string playlistId = 7;
-		repeated string stationId = 8;
-		repeated string stationCookie = 9;
-		repeated KeyValue otherEventData = 10;
-	}
+        required string page = 5;
+        required string section = 6;
+        required string component = 7;
+        required string element = 8;
+        required string action = 9;
 
-	required EventData eventData = 6;
+        required string initiator = 10;
 
-	message Context {
-		optional string containerName = 1;
-		optional string stationIdPlaying = 2;
-		optional int32 trackIdPlaying = 3;
-		optional int32 trackVersionPlaying = 4;
-		repeated KeyValue otherContext = 5;
-	}
+        message KeyValue {
+                required string key = 1;
+                required string value = 2;
+        }
 
-	required Context context = 7;
+        message EventData {
+                repeated string deviceId = 1;
+                repeated int32 trackId = 2;
+                repeated int32 trackVersionId = 3;
+                repeated int32 albumId = 4;
+                repeated int32 artistId = 5;
+                repeated int32 playlistId = 6;
+                repeated string stationId = 7;
+                repeated string stationCookie = 8;
+                repeated KeyValue otherEventData = 9;
+        }
+
+        required EventData eventData = 11;
+
+        required int32 version = 12;
 }
 
 message BBMUserEventBatch {
