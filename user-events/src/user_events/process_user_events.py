@@ -5,6 +5,7 @@ import userevent_pb2 as ue
 import uuid
 import protobuf_json
 import random
+import os
 
 pageExamples = [ 'home', 'mySettings', 'mainMenu', 'charts']
 sectionExamples = { 'home': [ 'nowPlaying', 'welcome' ],
@@ -132,14 +133,39 @@ def jsonifyAllUserEvents(protobufFilename, outputFilename):
     try:
         f = open(outputFilename, "w")
         json_obj = protobuf_json.pb2json(userEventsBatch)
-        print type(json_obj)
-        for json_buf in json_obj:
-            #f.write(json_obj)
-            print "{0}\n".format(json_obj)
+        f.write(str(json_obj))
         f.close()
     except IOError:
         print outputFilename + ": Could not open file.  Exiting"
         sys.exit(1)
+
+def exportUserEvents(targetDirectory, maxItemsPerBatch, numberOfBatches):
+    """
+    Creates randomized events in batches of maxItemsPerBatch,
+    numberOfBatches total and writes as individual binary files in targetDirectory
+    """
+
+    try:
+        os.mkdir(targetDirectory)
+    except:
+        pass
+
+    try:
+        for batchCount in range(0, numberOfBatches):
+            userEventsBatch = ue.BBMUserEventBatch()
+
+            for j in range(0, random.randint(1, maxItemsPerBatch)):
+                appendUserEvent(userEventsBatch)
+
+            filename = "{0}/event_batch_{1}.pbin".format(targetDirectory, batchCount)
+            f = open(filename, "wb")
+            f.write(userEventsBatch.SerializeToString())
+            f.close()
+
+        print "Wrote {0} user events".format(batchCount + 1)
+
+    except IOError:
+        print filename + ": Could not save file. Aborting"
 
 def main():
 
@@ -148,6 +174,7 @@ def main():
         print "add [num of events to add] filename"
         print "list filename"
         print "json protobuf_filename output_filename"
+        print "export directory_name max_items_per_batch number_of_batches"
         exit(1)
 
     command = sys.argv[1]
@@ -191,6 +218,14 @@ def main():
     elif command == 'json':
 
         jsonifyAllUserEvents(sys.argv[2], sys.argv[3])
+
+    elif command == 'export':
+
+        # 2: output directory
+        # 3: max items per batch (will randomize up to this number)
+        # 4: total batches
+
+        exportUserEvents(sys.argv[2], int(sys.argv[3]), int(sys.argv[4]))
 
     else:
         print "Unregistered command. Exiting"
