@@ -3,6 +3,43 @@ __author__ = 'tom'
 import sys
 import userevent_pb2 as ue
 import uuid
+import protobuf_json
+import random
+
+pageExamples = [ 'home', 'mySettings', 'mainMenu', 'charts']
+sectionExamples = { 'home': [ 'nowPlaying', 'welcome' ],
+                    'mySettings': [ 'likesAndDislikes', 'payment' ],
+                    'mainMenu': ['savedStations', 'favourites' ],
+                    'charts': ['artistStations', 'featuredStations'] }
+componentExamples = { 'home': [ 'stationInfo', 'welcome' ],
+                      'mySettings': [ 'topPanel', '' ], # blank is possible
+                      'mainMenu': ['listStations', 'customize' ],
+                      'charts': ['playerBar', 'chartPanel'] }
+elementExamples = { 'home': [ 'continueButton', 'searchBox' ],
+                      'mySettings': [ 'likeButton', 'cancelSubscriptionButton' ], # blank is possible
+                      'mainMenu': ['deleteStationButton', 'saveStationButton' ],
+                      'charts': ['stationEntry', 'exitButton'] }
+actionExamples = [ 'click' ]
+
+platformExamples = [ 'web', 'iphone', 'ipad' ]
+initiatorExamples = [ 'userClient', 'appClient' ]
+
+stationCodeExamples = [ 'a', 'g', 's', 'z' ]
+
+arbitraryKeys = [ 'searchPhrase', 'lyricId', 'newName' ]
+arbitraryValues = [ 'michael jackson', 'shiina ringo', 'man in the mirror', 'tadashii machi', 'toms playlist', 'old playlist' ]
+
+timestampCounter = 1385475691000L
+
+def randomListEntry(thisList):
+    return thisList[random.randint(0, len(thisList) - 1)]
+
+def randomDictEntry(thisDict, key):
+    return randomListEntry(thisDict[key])
+
+def randomlyInclude(randomThresh, fun, *args):
+    if random.random() < randomThresh:
+        fun (*args)
 
 def appendUserEvent(userEventsBatch):
 
@@ -10,34 +47,50 @@ def appendUserEvent(userEventsBatch):
 
     # main keys
 
-    userEvent.timestamp = 1000L
+    global timestampCounter
+    timestampCounter = timestampCounter + random.randint(0, 1000)
+    userEvent.timestamp = timestampCounter
     userEvent.uuid = str(uuid.uuid4())
-    userEvent.platform = 'key'
-    userEvent.userId = 12345
-    userEvent.page = 'home'
-    userEvent.section = 'nowPlaying'
-    userEvent.component = 'stationInfo'
-    userEvent.element = 'favouriteStationButton'
-    userEvent.action = 'click'
+    userEvent.platform = randomListEntry(platformExamples)
+    userEvent.userId = 1000000 + random.randint(0, 1000000)
 
-    userEvent.initiator = 'userClient'
+    randomPage = randomListEntry(pageExamples)
+    userEvent.page = randomPage
+    userEvent.section = randomDictEntry(sectionExamples, randomPage)
+    userEvent.component = randomDictEntry(componentExamples, randomPage)
+    userEvent.element = randomDictEntry(elementExamples, randomPage)
+    userEvent.action = randomListEntry(actionExamples)
 
-    userEvent.sessionId = 'ASESSIONID'
+    userEvent.initiator = randomListEntry(initiatorExamples)
+
+    # another uuid will do as an example
+    userEvent.sessionId = str(uuid.uuid4())
 
     # event data
 
     eventData = userEvent.eventData
 
-    eventData.stationId.append('a123')
-    eventData.trackId.append(4321)
+    # must include some event data otherwise it won't validate
+    eventData.playlistId.append(random.randint(1, 100000))
 
-    arbitraryData1 = eventData.otherEventData.add()
-    arbitraryData1.key = 'search_phrase'
-    arbitraryData1.value = 'christmas'
+    # can be a list of values
+    randomlyInclude(0.3, eventData.stationId.append, "{0}{1}".format(randomListEntry(stationCodeExamples), random.randint(1, 100000)))
+    randomlyInclude(0.3, eventData.stationId.append, "{0}{1}".format(randomListEntry(stationCodeExamples), random.randint(1, 100000)))
+    randomlyInclude(0.3, eventData.stationId.append, "{0}{1}".format(randomListEntry(stationCodeExamples), random.randint(1, 100000)))
 
-    arbitraryData1 = eventData.otherEventData.add()
-    arbitraryData1.key = 'search_results'
-    arbitraryData1.value = '0'
+    randomlyInclude(0.3, eventData.trackId.append, random.randint(1, 100000))
+    randomlyInclude(0.3, eventData.trackVersionId.append, random.randint(1, 100000))
+    randomlyInclude(0.3, eventData.albumId.append, random.randint(1, 100000))
+
+    if random.random() < 0.3:
+        arbitraryData1 = eventData.otherEventData.add()
+        arbitraryData1.key = randomListEntry(arbitraryKeys)
+        arbitraryData1.value = randomListEntry(arbitraryValues)
+
+    if random.random() < 0.3:
+        arbitraryData1 = eventData.otherEventData.add()
+        arbitraryData1.key = randomListEntry(arbitraryKeys)
+        arbitraryData1.value = randomListEntry(arbitraryValues)
 
     userEvent.version = 1
 
@@ -61,7 +114,32 @@ def listAllUserEvents(filename):
     # Query uuids of events
 
     for userEvent in userEventsBatch.userEvent:
-        print "event id: {0}, event data extra fields: {1}".format(userEvent.uuid, [e.key for e in userEvent.eventData.otherEventData])
+        print "event id: {0}, event name: {1} event data extra fields: {2}".format(userEvent.uuid,
+                                                                                   "{0}.{1}.{2}.{3}.{4}".format(userEvent.page, userEvent.section, userEvent.component, userEvent.element, userEvent.action),
+                                                                                   [e.key for e in userEvent.eventData.otherEventData])
+
+def jsonifyAllUserEvents(protobufFilename, outputFilename):
+
+    userEventsBatch = ue.BBMUserEventBatch()
+    try:
+        f = open(protobufFilename, "rb")
+        userEventsBatch.ParseFromString(f.read())
+        f.close()
+    except IOError:
+        print protobufFilename + ": Could not open file.  Exiting"
+        sys.exit(1)
+
+    try:
+        f = open(outputFilename, "w")
+        json_obj = protobuf_json.pb2json(userEventsBatch)
+        print type(json_obj)
+        for json_buf in json_obj:
+            #f.write(json_obj)
+            print "{0}\n".format(json_obj)
+        f.close()
+    except IOError:
+        print outputFilename + ": Could not open file.  Exiting"
+        sys.exit(1)
 
 def main():
 
@@ -69,6 +147,7 @@ def main():
         print "Usage:", sys.argv[0]
         print "add [num of events to add] filename"
         print "list filename"
+        print "json protobuf_filename output_filename"
         exit(1)
 
     command = sys.argv[1]
@@ -108,6 +187,10 @@ def main():
     elif command == 'list':
 
         listAllUserEvents(sys.argv[2])
+
+    elif command == 'json':
+
+        jsonifyAllUserEvents(sys.argv[2], sys.argv[3])
 
     else:
         print "Unregistered command. Exiting"
