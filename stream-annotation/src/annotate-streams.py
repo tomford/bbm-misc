@@ -85,7 +85,7 @@ with gzip.open(filename) as f:
                 if isStreamEndMatch:
                     annotation="" # this is a native StreamEnd call, so not adding any annotation
                 else:
-                    annotation="StreamInfo:StreamStart:"
+                    annotation="StreamInfo:"
 
             annotatedLine = "{0}{1}{2}\n".format(timestamp, annotation, restOfLine)
             #print annotatedLine
