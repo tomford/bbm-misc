@@ -1,0 +1,39 @@
+{"namespace": "com.blinkboxmusic",
+ "type": "record",
+ "name": "Event",
+ "fields": [
+     {"name": "timestamp", "type": "int"},
+     {"name": "uuid", "type": "string"},
+     {"name": "apikey", "type": ["string", "null"]},
+     {"name": "eventName", "type": "string"},
+     {"name": "eventType", "type": "string"},
+
+     {"name": "eventData", "type": ["null", {
+      "type": "record",
+      "name": "EventData",
+      "fields": [
+            {"name": "userId", "type": ["int", "null"]},
+            {"name": "deviceId", "type": ["int", "null"]},
+            {"name": "trackId", "type": ["int", "null"]},
+            {"name": "trackVersionId", "type": ["int", "null"]},
+            {"name": "albumId", "type": ["int", "null"]},
+            {"name": "artistId", "type": ["int", "null"]},
+            {"name": "playlistId", "type": ["int", "null"]},
+            {"name": "stationId", "type": ["string", "null"]},
+            {"name": "stationCookie", "type": ["string", "null"]},
+            {"name": "otherEventData", "type": ["null", {"type": "map", "values": "string"}]}
+      ]}]},
+
+       {"name": "eventContext", "type": ["null", {
+        "type": "record",
+        "name": "EventContext",
+        "fields": [
+              {"name": "containerName", "type": ["string", "null"]},
+              {"name": "deviceId", "type": ["int", "null"]},
+              {"name": "trackIdPlaying", "type": ["int", "null"]},
+              {"name": "trackVersionPlaying", "type": ["int", "null"]},
+              {"name": "stationIdPlaying", "type": ["string", "null"]},
+              {"name": "otherEventContext", "type": ["null", {"type": "map", "values": "string"}]}
+        ]}]}
+  ]
+}

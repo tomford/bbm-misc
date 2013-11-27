@@ -1,43 +1,44 @@
+
 package bbm;
 
 message BBMUserEvent {
 
-	required int64 timestamp = 1;
-	required string uuid = 2;
-	optional string apikey = 3;
-	optional int32 userId = 4; //best to be optional
-	required string eventType = 5;
+        required int64 timestamp = 1;
+        required string uuid = 2;
+        required string platform = 3;
 
-	enum NetworkStatus {
-	     ONLINE = 0;
-	     OFFLINE = 1;
-	}
+        required int32 userId = 4;
 
-	required NetworkStatus networkStatus = 6;
+        required string page = 5;
+        required string section = 6;
+        required string component = 7;
+        required string element = 8;
+        required string action = 9;
 
-	message KeyValue {
-		required string key = 1;
-		required string value = 2;
-	}
+        required string initiator = 10;
 
-	message Context {
-		optional string containerName = 1;
-		optional string stationIdentPlaying = 2;
-		optional int32 trackIdPlaying = 3;
-		optional int32 trackVersionPlaying = 4;
-		repeated KeyValue otherContext = 5;
-	}
+	required string sessionId = 11;
 
-	required Context context = 7;
+        message KeyValue {
+                required string key = 1;
+                required string value = 2;
+        }
 
-	message EventData {
-		optional string stationIdent = 1;
-		optional string trackId = 2;
-		optional string trackVersionId = 3;
-		repeated KeyValue otherEventData = 4;
-	}
+        message EventData {
+                repeated string deviceId = 1;
+                repeated int32 trackId = 2;
+                repeated int32 trackVersionId = 3;
+                repeated int32 albumId = 4;
+                repeated int32 artistId = 5;
+                repeated int32 playlistId = 6;
+                repeated string stationId = 7;
+                repeated string stationCookie = 8;
+                repeated KeyValue otherEventData = 9;
+        }
 
-	required EventData eventData = 8;
+        required EventData eventData = 12;
+
+        required int32 version = 13;
 }
 
 message BBMUserEventBatch {
